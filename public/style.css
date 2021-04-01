@@ -2,4 +2,28 @@
 .App {
   margin: 1rem;
   font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form label {
+  margin: 5px;
+}
+
+form label select, form label input {
+  margin-left: 2px;
+}
+
+form > input {
+  width: 30%;
 }
