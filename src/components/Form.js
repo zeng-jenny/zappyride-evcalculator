@@ -8,7 +8,8 @@ class Form extends React.Component {
       miles: 0,
       startTime: 0,
       endTime: 0,
-      total: 0,
+      Atotal: 0,
+      Btotal: 0,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleTimeChange = this.handleTimeChange.bind(this);
@@ -29,47 +30,39 @@ class Form extends React.Component {
   }
   handleSubmit(evt) {
     evt.preventDefault();
-    if (this.state.rate === "A") {
+    this.setState(
+      {
+        Atotal: (Number(this.state.miles) * 0.15).toFixed(2),
+      },
+      () => console.log(this.state.total)
+    );
+
+    if (this.state.startTime <= 12 && this.state.endTime >= 18) {
+      let tot =
+        (12 - this.state.startTime + this.state.endTime - 18) * 0.08 + 6 * 0.2;
       this.setState(
         {
-          total: Number(this.state.miles) * 0.15,
+          Btotal: tot.toFixed(2),
         },
-        () => console.log(this.state.total)
+        () => console.log(this.state)
       );
+    } else if (this.state.startTime >= 12 && this.state.endTime >= 18) {
+      let tot =
+        (18 - this.state.startTime) * 0.2 + (this.state.endTime - 18) * 0.08;
+
+      this.setState({ Btotal: tot.toFixed(2) }, () => console.log(this.state));
+    } else if (this.state.startTime < 12 && this.state.endTime <= 18) {
+      let tot =
+        (12 - this.state.startTime) * 0.08 + (this.state.endTime - 12) * 0.08;
+      this.setState({ Btotal: tot.toFixed(2) }, () => console.log(this.state));
     } else {
-      if (this.state.startTime >= 12 && this.state.endTime <= 18) {
-        this.setState(
-          {
-            total:
-              (this.state.endTime - this.state.startTime) *
-              0.2 *
-              Number(this.state.miles),
-          },
-          () => console.log(this.state)
-        );
-      } else if (this.state.startTime >= 12 && this.state.endTime >= 18) {
-        let remainingTime = this.state.endTime - 18;
-        let tot =
-          ((18 - this.state.startTime) * 0.2 + remainingTime * 0.08) *
-          Number(this.state.miles);
-        this.setState({ total: tot }, () => console.log(this.state));
-      } else if (this.state.startTime < 12 && this.state.endTime <= 18) {
-        let remainingTime = this.state.endTime - 12;
-        let tot =
-          ((12 - this.state.startTime) * 0.2 + remainingTime * 0.08) *
-          Number(this.state.miles);
-        this.setState({ total: tot }, () => console.log(this.state));
-      } else {
-        let lowRate = 12 - this.state.startTime + this.state.endTime - 18;
-        let highRate = 18 - 12;
-        let tot = lowRate * 0.08 + highRate * 0.2 * Number(this.state.miles);
-        this.setState(
-          {
-            total: tot,
-          },
-          () => console.log(this.state)
-        );
-      }
+      let tot = (this.state.endTime - this.state.startTime) * 0.2;
+      this.setState(
+        {
+          Btotal: tot.toFixed(2),
+        },
+        () => console.log(this.state)
+      );
     }
   }
 
@@ -107,9 +100,13 @@ class Form extends React.Component {
           <input type="submit" value="Submit" />
         </form>
         <p>
-          Yearly total using Rate {this.state.rate ? this.state.rate : "A/B"}:
+          Yearly total using Rate A: $
+          {this.state.Atotal ? this.state.Atotal : 0}
         </p>
-        <p>{this.state.total ? this.state.total : 0}</p>
+        <p>
+          Yearly total using Rate B: $
+          {this.state.Btotal ? this.state.Btotal : 0}
+        </p>
       </div>
     );
   }
