@@ -1,4 +1,5 @@
 import React from "react";
+import Calculations from "./Calculation.js";
 
 class Form extends React.Component {
   constructor() {
@@ -30,16 +31,19 @@ class Form extends React.Component {
   }
   handleSubmit(evt) {
     evt.preventDefault();
+    let kwh = Number(this.state.miles) * 0.3;
     this.setState(
       {
-        Atotal: (Number(this.state.miles) * 0.15).toFixed(2),
+        Atotal: (0.15 * kwh).toFixed(2),
       },
       () => console.log(this.state.total)
     );
 
     if (this.state.startTime <= 12 && this.state.endTime >= 18) {
       let tot =
-        (12 - this.state.startTime + this.state.endTime - 18) * 0.08 + 6 * 0.2;
+        ((12 - this.state.startTime + this.state.endTime - 18) * 0.08 +
+          6 * 0.2) *
+        kwh;
       this.setState(
         {
           Btotal: tot.toFixed(2),
@@ -48,15 +52,17 @@ class Form extends React.Component {
       );
     } else if (this.state.startTime >= 12 && this.state.endTime >= 18) {
       let tot =
-        (18 - this.state.startTime) * 0.2 + (this.state.endTime - 18) * 0.08;
-
+        ((18 - this.state.startTime) * 0.2 + (this.state.endTime - 18) * 0.08) *
+        kwh;
       this.setState({ Btotal: tot.toFixed(2) }, () => console.log(this.state));
     } else if (this.state.startTime < 12 && this.state.endTime <= 18) {
       let tot =
-        (12 - this.state.startTime) * 0.08 + (this.state.endTime - 12) * 0.08;
+        ((12 - this.state.startTime) * 0.08 +
+          (this.state.endTime - 12) * 0.08) *
+        kwh;
       this.setState({ Btotal: tot.toFixed(2) }, () => console.log(this.state));
     } else {
-      let tot = (this.state.endTime - this.state.startTime) * 0.2;
+      let tot = (this.state.endTime - this.state.startTime) * 0.2 * kwh;
       this.setState(
         {
           Btotal: tot.toFixed(2),
@@ -70,43 +76,43 @@ class Form extends React.Component {
     return (
       <div className="info">
         <form onSubmit={this.handleSubmit}>
-          <label htmlFor="rate">
-            Rate Options:
-            <select name="rate" onChange={this.handleChange}>
-              <option value="selection" hidden>
-                Please select a rate option.
-              </option>
-              <option value="A">Rate A</option>
-              <option value="B">Rate B</option>
-            </select>
-          </label>
-          <label htmlFor="miles">
-            How many miles do you plan to drive in a year?:
-            <input type="number" name="miles" onChange={this.handleChange} />
-          </label>
-          <label htmlFor="time">
-            What hours of the day will you plan to charge?:
-            <input
-              type="time"
-              name="startTime"
-              onChange={this.handleTimeChange}
-            />
-            <input
-              type="time"
-              name="endTime"
-              onChange={this.handleTimeChange}
-            />
-          </label>
-          <input type="submit" value="Submit" />
+          <fieldset>
+            <legend>Complete to form below to compare rates!</legend>
+            <label htmlFor="rate">
+              Rate Options:
+              <select name="rate" onChange={this.handleChange}>
+                <option value="selection" hidden>
+                  Please select a rate option.
+                </option>
+                <option value="A">Rate A</option>
+                <option value="B">Rate B</option>
+              </select>
+            </label>
+            <label htmlFor="miles">
+              How many miles do you plan to drive in a year?:
+              <input type="number" name="miles" onChange={this.handleChange} />
+            </label>
+            <label htmlFor="time">
+              What hours of the day will you plan to charge?:
+              <input
+                type="time"
+                name="startTime"
+                onChange={this.handleTimeChange}
+              />
+              <input
+                type="time"
+                name="endTime"
+                onChange={this.handleTimeChange}
+              />
+            </label>
+            <input type="submit" value="Submit" />
+          </fieldset>
         </form>
-        <p>
-          Yearly total using Rate A: $
-          {this.state.Atotal ? this.state.Atotal : 0}
-        </p>
-        <p>
-          Yearly total using Rate B: $
-          {this.state.Btotal ? this.state.Btotal : 0}
-        </p>
+        <Calculations
+          rate={this.state.rate}
+          Atotal={this.state.Atotal}
+          Btotal={this.state.Btotal}
+        />
       </div>
     );
   }
